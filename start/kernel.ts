@@ -20,7 +20,10 @@ import Server from '@ioc:Adonis/Core/Server'
 | are defined for every HTTP requests.
 |
 */
-Server.middleware.register([() => import('@ioc:Adonis/Core/BodyParser')])
+Server.middleware.register([
+  () => import('@ioc:Adonis/Core/BodyParser'),
+  () => import('App/Middleware/ApiResponseMiddleware'),
+])
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +39,7 @@ Server.middleware.register([() => import('@ioc:Adonis/Core/BodyParser')])
 | and then use it as follows
 */
 Server.middleware.registerNamed({
-  throttle: () => import('@adonisjs/limiter/build/throttle'),
-  auth: () => import('App/Middleware/Auth'),
+  'throttle': () => import('@adonisjs/limiter/build/throttle'),
+  'auth': () => import('App/Middleware/Auth'),
+  'verified-email': () => import('App/Middleware/EmailIsVerified'),
 })

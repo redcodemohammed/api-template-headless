@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { TokenTypes } from 'App/Enums/TokenTypes'
 import SendToken from 'App/Mailers/PasswordReset/SendToken'
 import Token from 'App/Models/Token'
 import User from 'App/Models/User'
@@ -25,15 +26,13 @@ export default class PasswordResetsController {
   public async store({ request, response }: HttpContextContract) {
     const { password, token } = await request.validate(UpdatePasswordValidator)
 
-    const user = await Token.getPasswordResetUser(token)
+    const user = await Token.getTokenUser(token, TokenTypes.PASSWORD_RESET)
 
     if (!user) {
-      return response.forbidden({
-        message: 'Invalid token.',
-      })
+      return response.forbidden('Invalid token.')
     }
 
-    await Token.expirePasswordResetTokens(user)
+    await Token.expireTokens(user, 'passwordResetTokens')
 
     await user.merge({ password }).save()
 

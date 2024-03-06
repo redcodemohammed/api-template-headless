@@ -24,6 +24,8 @@ export default class AuthenticationController {
 
     const user = await User.create({ email, password, username })
 
+    await user.sendVerifyEmail()
+
     const token = await auth.login(user)
 
     return token
